@@ -2,6 +2,8 @@ require 'open-uri'
 require 'json'
 
 class ApiController < ApplicationController
+
+  # done in class
   def pirate_form
   end
 
@@ -19,7 +21,7 @@ class ApiController < ApplicationController
     @result = parsed_result['translation']['pirate']
   end
 
-
+  #done as homework - jw
   def coord_form
     #=== Instructions ===================================
     # Create a form to send a user's address to the coord_process
@@ -36,9 +38,21 @@ class ApiController < ApplicationController
     # Ref: https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA
     # as an example
     #================================================
-    @coords = "An array with your coordinates inside"
+
+    street_address = URI.encode(params[:street_address])
+    city = URI.encode(params[:city])
+    state = URI.encode(params[:state])
+    zip_code = URI.encode(params[:zip_code])
+    url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{street_address},#{city},#{state},#{zip_code}"
+    result = open(url).read
+    @parsed_result = JSON.parse(result)
+
+    @lat = @parsed_result['results'][0]['geometry']['location']['lat']
+    @lng = @parsed_result['results'][0]['geometry']['location']['lng']
+
   end
 
+  # done as homework - jw
   def meme_gen_form
     #=== Instructions ===================================
     # Create a form to send a info to the meme_gen_process
@@ -48,13 +62,20 @@ class ApiController < ApplicationController
     #================================================
   end
 
-  def meme_process_form
+  def meme_gen_process
     #=== Instructions ===================================
     # Create a meme based on user-submitted info
     #
     # Ref: http://apimeme.com/
     #================================================
+
+    top_text = URI.encode(params[:top_text])
+    bottom_text = URI.encode(params[:bottom_text])
+    @page = "http://apimeme.com/meme?meme=Cool+Obama&top=#{top_text}&bottom=#{bottom_text}"
   end
+
+# done as homework -jw
+# a bit random as images have keyword to the types text only
 
   def congress_form
     #=== Instructions ===================================
@@ -70,6 +91,13 @@ class ApiController < ApplicationController
     #
     # Ref: http://www.loc.gov/pictures/search/?q=computer&fo=json
     #================================================
+
+    text = URI.encode(params[:text])
+    url = "http://www.loc.gov/pictures/search/?q=#{text}&fo=json"
+    result = open(url).read
+    parsed_result = JSON.parse(result)
+    @result = parsed_result['results'][0]['image']['full']
+
   end
 
   def random_user
@@ -96,8 +124,15 @@ class ApiController < ApplicationController
     #
     # Ref: http://techslides.com/grab-wikipedia-pictures-by-api-with-php
     #================================================
+
+
+
   end
 
+
+
+
+# finished after watching in class -jw
   def nearest_station
     #=== Instructions ===================================
     # Use the Divvy API to display all stations that have at least
@@ -108,5 +143,14 @@ class ApiController < ApplicationController
     #
     # Ref: http://www.divvybikes.com/stations/json/
     #================================================
+
+    result = open("http://www.divvybikes.com/stations/json/").read
+    parsed_result = JSON.parse(result)
+    @stations = []
+    parsed_result['stationBeanList'].each do |stations_hash|
+      if stations_hash['availableBikes'] >= 5
+        @stations << "#{stations_hash['stationName']} - #{stations_hash['availableBikes']} bikes"
+      end
+    end
   end
 end

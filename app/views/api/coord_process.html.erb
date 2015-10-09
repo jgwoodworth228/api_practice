@@ -1,4 +1,35 @@
-<h1>You address is at <%= @coords %></h1>
+<h1>Your address is at <%= @lat %> and <%= @lng %> </h1>
+<p></p>
+
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 80%;
+      }
+    </style>
+
+<!--   <body> -->
+    <div id="map" class="col-sm-offset-1 col-sm-6"></div>
+    <script>
+
+var map;
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: <%= @lat %>, lng: <%= @lng %>},
+    zoom: 14
+  });
+}
+
+    </script>
+    <script src="http://maps.googleapis.com/maps/api/js?callback=initMap"
+        async defer></script>
+  <!-- </body> -->
+
+
 
 <!-- Bonus: Include a Google map centered on these coordinates -->
 <!-- Use https://developers.google.com/maps/documentation/javascript/tutorial for help -->
